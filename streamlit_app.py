@@ -69,7 +69,7 @@ def main():
 
             if st.session_state.step >= 1:
                 st.subheader("1️⃣ Category Summary")
-                st.write(st.session_state.summary_text)
+                st.write(st.session_state.summary_text["message"])
 
             if st.session_state.step == 1:
                 if st.button("2️⃣ Generate Bullet Summary"):
