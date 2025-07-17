@@ -126,7 +126,7 @@ def call_maturity_gap_api(payload):
         response.raise_for_status()
         return response.json()
         
-        response_text = response.json().get("text", "")
+        response_text = response["message"]
         gaps = []
         gap_entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
 
