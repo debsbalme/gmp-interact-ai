@@ -49,13 +49,13 @@ def main():
                 st.error(f"The uploaded CSV must contain the following columns: **{', '.join(required_columns)}**")
                 return
 
-            st.success("CSV file successfully loaded! See sample below.")
-            st.dataframe(df.head())
-
             subset = df[df["Category"] != "Business"]
+            if subset.empty:
+                st.error("No data found after filtering out 'Business' category.")
+                return
+
             subset_data = subset[['Category', 'Question', 'Answer']]
             message_payload = subset_data.replace({np.nan: ''}).to_csv(sep='\t', index=False, header=True)
-
 
             if "step" not in st.session_state:
                 st.session_state.step = 0
