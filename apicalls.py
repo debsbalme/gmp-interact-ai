@@ -124,7 +124,7 @@ def call_maturity_gap_api(payload):
     try:
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
-        return response.json()
+
         
         response_text = response["message"]
         gaps = []
