@@ -60,6 +60,7 @@ def main():
 
 
             display_breadcrumb(st.session_state.step)
+            api_endpoint_path = "https://interact.interpublic.com/api/chat-ai/v1/bots/be55b625-70c3-44cd-82e0-8c5de53ca0fd/messages"
 
             if st.session_state.step == 0:
                 if st.button("1️⃣ Generate Category Summary"):
@@ -73,14 +74,15 @@ def main():
 
             if st.session_state.step == 1:
                 if st.button("2️⃣ Generate Bullet Summary"):
-                    st.session_state.bullet_summary = generate_bullet_summary(df)
+                    api_endpoint_path = "https://interact.interpublic.com/api/chat-ai/v1/bots/dc5605d1-cd9f-4a99-8de9-3667ae319d78/messages"
+                    st.session_state.bullet_summary = call_interact_api(message_payload)
                     st.session_state.step = 2
                     st.rerun()
 
             if st.session_state.step >= 2:
                 st.subheader("2️⃣ Bullet Point Summary")
                 st.write("Please copy and paste the text below into your email or document.")
-                st.write(st.session_state.bullet_summary)
+                st.write(st.session_state.bullet_summary["message"])
 
             if st.session_state.step == 2:
                 if st.button("3️⃣ Identify Maturity Gaps"):
