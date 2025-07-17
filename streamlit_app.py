@@ -95,6 +95,7 @@ def main():
                 st.subheader("3️⃣ Maturity Gaps")
                 st.dataframe(st.session_state.maturity_gap_df["message"], use_container_width=True)
 
+
             if st.session_state.step == 3:
                 if st.button("4️⃣ Identify Maturity Drivers"):
                     st.session_state.maturity_driver_df = identify_top_maturity_drivers(df)
