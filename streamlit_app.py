@@ -8,7 +8,9 @@ import json
 from datetime import datetime
 from apicalls import (
     get_access_token,
-    call_interact_api
+    call_category_summary_api,
+    call_bullet_summary_api,
+    call_maturity_gap_api
 )
 
 import base64
@@ -64,7 +66,7 @@ def main():
 
             if st.session_state.step == 0:
                 if st.button("1️⃣ Generate Category Summary"):
-                    st.session_state.summary_text = call_interact_api(message_payload)
+                    st.session_state.summary_text = call_category_summary_api(message_payload)
                     st.session_state.step = 1
                     st.rerun()
 
@@ -74,8 +76,7 @@ def main():
 
             if st.session_state.step == 1:
                 if st.button("2️⃣ Generate Bullet Summary"):
-                    api_endpoint_path = "https://interact.interpublic.com/api/chat-ai/v1/bots/dc5605d1-cd9f-4a99-8de9-3667ae319d78/messages"
-                    st.session_state.bullet_summary = call_interact_api(message_payload)
+                    st.session_state.bullet_summary = call_bullet_summary_api(message_payload)
                     st.session_state.step = 2
                     st.rerun()
 
@@ -86,8 +87,7 @@ def main():
 
             if st.session_state.step == 2:
                 if st.button("3️⃣ Identify Maturity Gaps"):
-                    api_endpoint_path = "https://interact.interpublic.com/api/chat-ai/v1/bots/1c5f5ea4-0000-4536-af03-ba0e3b493aab/messages"
-                    st.session_state.maturity_gap_df = call_interact_api(message_payload)
+                    st.session_state.maturity_gap_df = call_maturity_gap_api(message_payload)
                     st.session_state.step = 3
                     st.rerun()
 
