@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import requests
 import json
+import re
 
 
 st.set_page_config(page_title="Interact API CSV Uploader", layout="centered")
