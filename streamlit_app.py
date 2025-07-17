@@ -48,6 +48,9 @@ def main():
             if not all(col in df.columns for col in required_columns):
                 st.error(f"The uploaded CSV must contain the following columns: **{', '.join(required_columns)}**")
                 return
+            
+            st.success("CSV file successfully loaded! See sample below.")
+            st.dataframe(df.head())
 
             subset = df[df["Category"] != "Business"]
             if subset.empty:

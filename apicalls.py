@@ -6,8 +6,6 @@ import json
 import re
 
 
-st.set_page_config(page_title="Interact API CSV Uploader", layout="centered")
-st.title("📄 CSV to Interact API")
 
 # ---- Load credentials from secrets ----
 hostname = "interact.interpublic.com"
@@ -53,21 +51,17 @@ def normalize_answer_for_comparison(answer_value):
 def call_category_summary_api(payload):
     url = "https://interact.interpublic.com/api/chat-ai/v1/bots/be55b625-70c3-44cd-82e0-8c5de53ca0fd/messages"
     token = get_access_token()
-  
     if not token:
         return None
-
     headers = {
         'Authorization': f'Bearer {token}',
         'X-APPLICATION-ID': application_id,
         'Content-Type': 'application/json'
     }
-
     request_body = {
         "files": [],
-        "message": message_payload
+        "message": payload
     }
-
     try:
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
@@ -75,26 +69,21 @@ def call_category_summary_api(payload):
     except Exception as e:
         st.error(f"API call failed: {e}")
         return None
-    
 
 def call_bullet_summary_api(payload):
     url = "https://interact.interpublic.com/api/chat-ai/v1/bots/dc5605d1-cd9f-4a99-8de9-3667ae319d78/messages"
     token = get_access_token()
-  
     if not token:
         return None
-
     headers = {
         'Authorization': f'Bearer {token}',
         'X-APPLICATION-ID': application_id,
         'Content-Type': 'application/json'
     }
-
     request_body = {
         "files": [],
-        "message": message_payload
+        "message": payload
     }
-
     try:
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
@@ -103,25 +92,20 @@ def call_bullet_summary_api(payload):
         st.error(f"API call failed: {e}")
         return None
 
-
 def call_maturity_gap_api(payload):
     url = "https://interact.interpublic.com/api/chat-ai/v1/bots/1c5f5ea4-0000-4536-af03-ba0e3b493aab/messages"
     token = get_access_token()
-  
     if not token:
         return None
-
     headers = {
         'Authorization': f'Bearer {token}',
         'X-APPLICATION-ID': application_id,
         'Content-Type': 'application/json'
     }
-
     request_body = {
         "files": [],
-        "message": message_payload
+        "message": payload
     }
-
     try:
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
