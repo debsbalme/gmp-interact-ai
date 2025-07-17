@@ -96,7 +96,7 @@ def main():
 
             if st.session_state.step >= 3:
                 st.subheader("3️⃣ Maturity Gaps")
-                st.dataframe(st.session_state.maturity_gap_df["message"], use_container_width=True)
+                st.dataframe(st.session_state.maturity_gap_df, use_container_width=True)
 
 
             if st.session_state.step == 3:
