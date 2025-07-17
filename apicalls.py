@@ -124,6 +124,28 @@ def call_maturity_gap_api(payload):
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
         return response.json()
+        
+        response_text = response.json().get("text", "")
+        gaps = []
+        gap_entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
+
+        for entry in gap_entries[1:]:
+          heading_match = re.search(r'(.*?)\s*\*\*\s*Context\*\*\:', entry, re.DOTALL)
+          context_match = re.search(r'\*\*\s*Context\*\*\:\s*(.*?)\s*\*\*\s*Impact\*\*\:', entry, re.DOTALL)
+          impact_match = re.search(r'\*\*\s*Impact\*\*\:\s*(.*)', entry, re.DOTALL)
+
+          heading = heading_match.group(1).strip() if heading_match else "N/A"
+          context = context_match.group(1).strip() if context_match else "N/A"
+          impact = impact_match.group(1).strip() if impact_match else "N/A"
+
+          gaps.append({
+              "Heading": heading,
+             "Context": context,
+             "Impact": impact
+          })
+
+    # Create a pandas DataFrame
+        mat_gaps_df = pd.DataFrame(gaps)
     except Exception as e:
         st.error(f"API call failed: {e}")
         return None
