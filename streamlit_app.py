@@ -32,7 +32,7 @@ def main():
     now = datetime.now()
     formatted_date_time = now.strftime("%Y-%m-%d")
 
-    st.image('acx_logo.png', width=100)
+   # st.image('acx_logo.png', width=100)
     st.title("GMP Assessment Analysis")
     st.write(f"The current date and time is: **{formatted_date_time}**")
     st.write("Upload a CSV file of the results from the GMP Assessment. Step through the process to receive the summary, bullet points, gaps, drivers and recommendations. This tool helps streamline and standardize GMP Assessment analysis.")
