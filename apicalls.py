@@ -4,6 +4,7 @@ import numpy as np
 import requests
 import json
 
+
 st.set_page_config(page_title="Interact API CSV Uploader", layout="centered")
 st.title("📄 CSV to Interact API")
 
@@ -146,6 +147,8 @@ def call_maturity_gap_api(payload):
 
     # Create a pandas DataFrame
         mat_gaps_df = pd.DataFrame(gaps)
+        return mat_gaps_df
+    
     except Exception as e:
         st.error(f"API call failed: {e}")
         return None
