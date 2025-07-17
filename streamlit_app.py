@@ -86,13 +86,14 @@ def main():
 
             if st.session_state.step == 2:
                 if st.button("3️⃣ Identify Maturity Gaps"):
-                    st.session_state.maturity_gap_df = identify_top_maturity_gaps(df)
+                    api_endpoint_path = "https://interact.interpublic.com/api/chat-ai/v1/bots/1c5f5ea4-0000-4536-af03-ba0e3b493aab/messages"
+                    st.session_state.maturity_gap_df = call_interact_api(message_payload)
                     st.session_state.step = 3
                     st.rerun()
 
             if st.session_state.step >= 3:
                 st.subheader("3️⃣ Maturity Gaps")
-                st.dataframe(st.session_state.maturity_gap_df, use_container_width=True)
+                st.dataframe(st.session_state.maturity_gap_df["message"], use_container_width=True)
 
             if st.session_state.step == 3:
                 if st.button("4️⃣ Identify Maturity Drivers"):
