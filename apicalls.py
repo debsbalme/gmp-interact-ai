@@ -107,35 +107,26 @@ def call_maturity_gap_api(payload):
         "message": payload
     }
     try:
-        response = requests.post(url, headers=headers, json=request_body)
+        response = requests.post(endpoint_url, headers=headers, json=payload)
         response.raise_for_status()
-        
-        response_text = response["message"]
-        print(response_text)
-        gaps = []
-        gap_entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
-
-        for entry in gap_entries[1:]:
-          heading_match = re.search(r'(.*?)\s*\*\*\s*Context\*\*\:', entry, re.DOTALL)
-          context_match = re.search(r'\*\*\s*Context\*\*\:\s*(.*?)\s*\*\*\s*Impact\*\*\:', entry, re.DOTALL)
-          impact_match = re.search(r'\*\*\s*Impact\*\*\:\s*(.*)', entry, re.DOTALL)
-
-          heading = heading_match.group(1).strip() if heading_match else "N/A"
-          context = context_match.group(1).strip() if context_match else "N/A"
-          impact = impact_match.group(1).strip() if impact_match else "N/A"
-
-          gaps.append({
-              "Heading": heading,
-             "Context": context,
-             "Impact": impact
-          })
-
-    # Create a pandas DataFrame
-        mat_gaps_df = pd.DataFrame(gaps)
-        print(mat_gaps_df)
-        return mat_gaps_df
-    
+        return response.json()
     except Exception as e:
-        st.error(f"API call failed: {e}")
+        st.error(f"API request failed: {e}")
         return None
 
+
+
+def parse_response(response_text):
+    gaps = []
+    entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
+    for entry in entries[1:]:
+        heading = re.search(r'(.*?)\s*\*\*\s*Context\*\*\:', entry, re.DOTALL)
+        context = re.search(r'\*\*\s*Context\*\*\:\s*(.*?)\s*\*\*\s*Impact\*\*\:', entry, re.DOTALL)
+        impact = re.search(r'\*\*\s*Impact\*\*\:\s*(.*)', entry, re.DOTALL)
+
+        gaps.append({
+            "Heading": heading.group(1).strip() if heading else "N/A",
+            "Context": context.group(1).strip() if context else "N/A",
+            "Impact": impact.group(1).strip() if impact else "N/A"
+        })
+    return pd.DataFrame(gaps)
