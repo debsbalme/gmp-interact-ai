@@ -107,7 +107,7 @@ def call_maturity_gap_api(payload):
         "message": payload
     }
     try:
-        response = requests.post(endpoint_url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -118,15 +118,19 @@ def call_maturity_gap_api(payload):
 
 def parse_response(response_text):
     gaps = []
-    entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
-    for entry in entries[1:]:
-        heading = re.search(r'(.*?)\s*\*\*\s*Context\*\*\:', entry, re.DOTALL)
-        context = re.search(r'\*\*\s*Context\*\*\:\s*(.*?)\s*\*\*\s*Impact\*\*\:', entry, re.DOTALL)
-        impact = re.search(r'\*\*\s*Impact\*\*\:\s*(.*)', entry, re.DOTALL)
+    gap_entries = re.split(r'\n\d+\.\s+\*\*Heading\*\*:', response_text)
 
-        gaps.append({
-            "Heading": heading.group(1).strip() if heading else "N/A",
-            "Context": context.group(1).strip() if context else "N/A",
-            "Impact": impact.group(1).strip() if impact else "N/A"
-        })
+    for entry in gap_entries[1:]:
+       heading_match = re.search(r'^(.*?)\n\s*\*\*Context\*\*\:', entry.strip(), re.DOTALL)
+       context_match = re.search(r'\*\*Context\*\*\:\s*(.*?)\n\s*\*\*Impact\*\*\:', entry.strip(), re.DOTALL)
+       impact_match = re.search(r'\*\*Impact\*\*\:\s*(.*)', entry.strip(), re.DOTALL)
+
+       gaps.append({
+            "Heading": heading_match.group(1).strip() if heading_match else "N/A",
+            "Context": context_match.group(1).strip() if context_match else "N/A",
+            "Impact": impact_match.group(1).strip() if impact_match else "N/A"
+     })
+
+    if not gaps:
+        st.warning("No matching entries found in the response.")
     return pd.DataFrame(gaps)
