@@ -109,9 +109,9 @@ def call_maturity_gap_api(payload):
     try:
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()
-
         
         response_text = response["message"]
+        print(response_text)
         gaps = []
         gap_entries = re.split(r'\d+\.\s*\*\*Heading\*\*\:', response_text)
 
@@ -132,6 +132,7 @@ def call_maturity_gap_api(payload):
 
     # Create a pandas DataFrame
         mat_gaps_df = pd.DataFrame(gaps)
+        print(mat_gaps_df)
         return mat_gaps_df
     
     except Exception as e:
