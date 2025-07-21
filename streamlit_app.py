@@ -90,14 +90,14 @@ def main():
 
             if st.session_state.step == 2:
                 if st.button("3️⃣ Identify Maturity Gaps"):
-                    st.session_state.maturity_gap_df = call_maturity_gap_api(message_payload)
-                    parsed_df = parse_response(response["message"])
+                    gap_df = call_maturity_gap_api(message_payload)
+                    st.session_state.maturity_gap_df = gap_df
                     st.session_state.step = 3
                     st.rerun()
 
             if st.session_state.step >= 3:
                 st.subheader("3️⃣ Maturity Gaps")
-                st.dataframe(parsed_df)
+                st.dataframe(st.session_state.maturity_gap_df, use_container_width=True)
 
 
             if st.session_state.step == 3:
