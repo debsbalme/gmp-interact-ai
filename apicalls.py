@@ -92,45 +92,57 @@ def call_bullet_summary_api(payload):
         st.error(f"API call failed: {e}")
         return None
 
+
+
 def call_maturity_gap_api(payload):
-    url = "https://interact.interpublic.com/api/chat-ai/v1/bots/1c5f5ea4-0000-4536-af03-ba0e3b493aab/messages"
     token = get_access_token()
     if not token:
         return None
+
+    url = f"https://{hostname}/api/chat-ai/v1/bots/1c5f5ea4-0000-4536-af03-ba0e3b493aab/messages"
     headers = {
         'Authorization': f'Bearer {token}',
         'X-APPLICATION-ID': application_id,
         'Content-Type': 'application/json'
     }
-    request_body = {
+    body = {
         "files": [],
         "message": payload
     }
+
     try:
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=body)
         response.raise_for_status()
-        return response.json()
+        result = response.json()
+
+        response_text = result.get("message", "")
+        if not response_text.strip():
+            st.warning("API returned an empty or missing message.")
+            return pd.DataFrame()
+
+        # Optional: Show full text for debugging
+        # st.code(response_text)
+
+        # Split on lines like "1. **Heading**:"
+        gap_entries = re.split(r'\n\d+\.\s+\*\*Heading\*\*:', response_text)
+
+        gaps = []
+        for entry in gap_entries[1:]:
+            heading_match = re.search(r'^(.*?)\n\s*\*\*Context\*\*\:', entry.strip(), re.DOTALL)
+            context_match = re.search(r'\*\*Context\*\*\:\s*(.*?)\n\s*\*\*Impact\*\*\:', entry.strip(), re.DOTALL)
+            impact_match = re.search(r'\*\*Impact\*\*\:\s*(.*)', entry.strip(), re.DOTALL)
+
+            gaps.append({
+                "Heading": heading_match.group(1).strip() if heading_match else "N/A",
+                "Context": context_match.group(1).strip() if context_match else "N/A",
+                "Impact": impact_match.group(1).strip() if impact_match else "N/A"
+            })
+
+        if not gaps:
+            st.warning("No matching entries found in the response.")
+        return pd.DataFrame(gaps)
+
     except Exception as e:
-        st.error(f"API request failed: {e}")
-        return None
+        st.error(f"API call failed: {e}")
+        return pd.DataFrame()
 
-
-
-def parse_response(response_text):
-    gaps = []
-    gap_entries = re.split(r'\n\d+\.\s+\*\*Heading\*\*:', response_text)
-
-    for entry in gap_entries[1:]:
-       heading_match = re.search(r'^(.*?)\n\s*\*\*Context\*\*\:', entry.strip(), re.DOTALL)
-       context_match = re.search(r'\*\*Context\*\*\:\s*(.*?)\n\s*\*\*Impact\*\*\:', entry.strip(), re.DOTALL)
-       impact_match = re.search(r'\*\*Impact\*\*\:\s*(.*)', entry.strip(), re.DOTALL)
-
-       gaps.append({
-            "Heading": heading_match.group(1).strip() if heading_match else "N/A",
-            "Context": context_match.group(1).strip() if context_match else "N/A",
-            "Impact": impact_match.group(1).strip() if impact_match else "N/A"
-     })
-
-    if not gaps:
-        st.warning("No matching entries found in the response.")
-    return pd.DataFrame(gaps)
